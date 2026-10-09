@@ -1,0 +1,48 @@
+name: 'Markdown for Agents'
+description: 'Generate Markdown versions of static HTML pages (+ llms.txt / llms-full.txt) so AI agents and answer engines can read and cite your site.'
+author: 'wu736139669'
+branding:
+  icon: 'file-text'
+  color: 'orange'
+
+inputs:
+  directory:
+    description: 'Directory containing the built static site (HTML files)'
+    required: false
+    default: './public'
+  base-url:
+    description: 'Canonical base URL, e.g. https://example.com (used for absolute links and llms.txt)'
+    required: true
+  site-name:
+    description: 'Site name. When set, llms.txt is generated.'
+    required: false
+    default: ''
+  site-description:
+    description: 'One-line site description for llms.txt'
+    required: false
+    default: ''
+  full-txt:
+    description: 'Also generate llms-full.txt (all pages concatenated)'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate Markdown versions of every page
+      shell: bash
+      run: |
+        python3 "${{ github.action_path }}/generate_md.py" \
+          "${{ inputs.directory }}" \
+          --base "${{ inputs.base-url }}"
+
+    - name: Generate llms.txt
+      if: ${{ inputs.site-name != '' }}
+      shell: bash
+      run: |
+        python3 "${{ github.action_path }}/make_llms_txt.py" \
+          "${{ inputs.directory }}" \
+          --base "${{ inputs.base-url }}" \
+          --name "${{ inputs.site-name }}" \
+          --description "${{ inputs.site-description }}" \
+          ${{ inputs.full-txt == 'true' && '--full' || '' }}
