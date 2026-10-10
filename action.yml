@@ -1,5 +1,5 @@
 name: 'Markdown for Agents'
-description: 'Generate Markdown versions of static HTML pages (+ llms.txt / llms-full.txt) so AI agents and answer engines can read and cite your site.'
+description: 'Serve Markdown to AI agents from any static site — free Cloudflare Worker + GitHub Action for agent-ready content.'
 author: 'wu736139669'
 branding:
   icon: 'file-text'
